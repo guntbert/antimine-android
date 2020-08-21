@@ -54,6 +54,11 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.activity:activity-ktx:1.1.0'
 
+    // Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+
     // Wear OS
     implementation 'androidx.wear:wear:1.0.0'
     implementation 'com.google.android.gms:play-services-wearable:17.0.0'
@@ -62,6 +67,7 @@ dependencies {
 
     // Koin
     implementation 'org.koin:koin-android:2.1.6'
+    implementation 'org.koin:koin-androidx-viewmodel:2.1.6'
     testImplementation 'org.koin:koin-test:2.1.6'
 
     // Kotlin

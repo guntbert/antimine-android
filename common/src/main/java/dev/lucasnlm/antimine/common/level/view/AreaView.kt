@@ -121,15 +121,19 @@ class AreaView : View {
             setBackgroundResource(android.R.color.transparent)
         }
 
-        area?.paintOnCanvas(
-            context,
-            canvas,
-            isAmbientMode,
-            isLowBitAmbient,
-            isFocused,
-            paintSettings,
-            theme
-        )
+        area?.run {
+            if (enabled) {
+                paintOnCanvas(
+                    context,
+                    canvas,
+                    isAmbientMode,
+                    isLowBitAmbient,
+                    isFocused,
+                    paintSettings,
+                    theme
+                )
+            }
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

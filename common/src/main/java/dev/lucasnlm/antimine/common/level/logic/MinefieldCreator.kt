@@ -7,7 +7,8 @@ import kotlin.random.Random
 
 class MinefieldCreator(
     private val minefield: Minefield,
-    private val randomGenerator: Random
+    private val randomGenerator: Random,
+    private val isRound: Boolean
 ) {
     private fun createMutableEmpty(): List<Area> {
         val width = minefield.width
@@ -17,11 +18,19 @@ class MinefieldCreator(
         return (0 until fieldLength).map { index ->
             val yPosition = floor((index / width).toDouble()).toInt()
             val xPosition = (index % width)
+            val enabled = !isRound || when (yPosition) {
+                0 -> (xPosition > 1 && xPosition < width - 2)
+                1 -> (xPosition > 0 && xPosition < width - 1)
+                height - 1 -> (xPosition > 1 && xPosition < width - 2)
+                height - 2 -> (xPosition > 0 && xPosition < width - 1)
+                else -> true
+            }
             Area(
                 index,
                 xPosition,
                 yPosition,
-                0,
+                enabled,
+                minesAround = 0,
                 hasMine = false
             )
         }

@@ -36,21 +36,31 @@ class MinefieldRepository : IMinefieldRepository {
         dimensionRepository: IDimensionRepository,
         preferencesRepository: IPreferencesRepository
     ): Minefield {
-        val fieldSize = dimensionRepository.defaultAreaSize()
-        val verticalGap = if (dimensionRepository.navigationBarHeight() > 0)
-            VERTICAL_STANDARD_GAP else VERTICAL_STANDARD_GAP_WITHOUT_BOTTOM
+        val finalWidth: Int
+        val finalHeight: Int
+        val finalMines: Int
+
+        if (!dimensionRepository.isWatch()) {
+            val fieldSize = dimensionRepository.defaultAreaSize()
+            val verticalGap = if (dimensionRepository.navigationBarHeight() > 0)
+                VERTICAL_STANDARD_GAP else VERTICAL_STANDARD_GAP_WITHOUT_BOTTOM
+
+            val display = dimensionRepository.displaySize()
+            val calculatedWidth = ((display.width / fieldSize).toInt() - HORIZONTAL_STANDARD_GAP)
+            val calculatedHeight = ((display.height / fieldSize).toInt() - verticalGap)
+
+            finalWidth = calculatedWidth.coerceAtLeast(MIN_STANDARD_WIDTH)
+            finalHeight = calculatedHeight.coerceAtLeast(MIN_STANDARD_HEIGHT)
+        } else {
+            finalWidth = 14
+            finalHeight = 14
+        }
 
         val progressiveMines = preferencesRepository.getProgressiveValue()
-
-        val display = dimensionRepository.displaySize()
-        val calculatedWidth = ((display.width / fieldSize).toInt() - HORIZONTAL_STANDARD_GAP)
-        val calculatedHeight = ((display.height / fieldSize).toInt() - verticalGap)
-        val finalWidth = calculatedWidth.coerceAtLeast(MIN_STANDARD_WIDTH)
-        val finalHeight = calculatedHeight.coerceAtLeast(MIN_STANDARD_HEIGHT)
         val fieldArea = finalWidth * finalHeight
-        val finalMines =
-            ((fieldArea * CUSTOM_LEVEL_MINE_RATIO).toInt() + progressiveMines)
-                .coerceAtMost((fieldArea * MAX_LEVEL_MINE_RATIO).toInt())
+
+        finalMines = ((fieldArea * CUSTOM_LEVEL_MINE_RATIO).toInt() + progressiveMines)
+            .coerceAtMost((fieldArea * MAX_LEVEL_MINE_RATIO).toInt())
 
         return Minefield(finalWidth, finalHeight, finalMines)
     }

@@ -68,7 +68,11 @@ class GameViewModel(
             newDifficulty, dimensionRepository, preferencesRepository
         )
 
-        gameController = GameController(minefield, minefieldRepository.randomSeed())
+        gameController = GameController(
+            minefield,
+            minefieldRepository.randomSeed(),
+            dimensionRepository.isRoundDisplay()
+        )
         initialized = true
         refreshUserPreferences()
 
@@ -122,7 +126,12 @@ class GameViewModel(
         currentDifficulty = save.difficulty
 
         val setup = save.minefield
-        gameController = GameController(setup, save.seed, save.uid)
+        gameController = GameController(
+            setup,
+            save.seed,
+            dimensionRepository.isRoundDisplay(),
+            save.uid
+        )
         initialized = true
         refreshUserPreferences()
 

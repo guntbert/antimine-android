@@ -1,8 +1,10 @@
 package dev.lucasnlm.antimine.common.level.repository
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.content.res.TypedArray
+import android.os.Build
 import dev.lucasnlm.antimine.common.R
 import dev.lucasnlm.antimine.core.preferences.IPreferencesRepository
 
@@ -14,6 +16,8 @@ interface IDimensionRepository {
     fun displaySize(): Size
     fun actionBarSize(): Int
     fun navigationBarHeight(): Int
+    fun isRoundDisplay(): Boolean
+    fun isWatch(): Boolean
 }
 
 data class Size(
@@ -64,6 +68,14 @@ class DimensionRepository(
         val resources = context.resources
         val resourceId: Int = resources.getIdentifier(NAVIGATION_BAR_HEIGHT, DEF_TYPE_DIMEN, DEF_PACKAGE)
         return if (resourceId > 0) { resources.getDimensionPixelSize(resourceId) } else 0
+    }
+
+    override fun isRoundDisplay(): Boolean {
+        return if (Build.VERSION.SDK_INT >= 23) context.resources.configuration.isScreenRound else false
+    }
+
+    override fun isWatch(): Boolean {
+        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_WATCH)
     }
 
     companion object {

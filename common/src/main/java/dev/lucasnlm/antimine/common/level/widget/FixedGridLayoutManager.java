@@ -71,6 +71,8 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager {
      */
     public void setTotalColumnCount(int count) {
         mTotalColumnCount = count;
+        mVisibleColumnCount = count;
+        mVisibleRowCount = count;
         requestLayout();
     }
 
@@ -296,7 +298,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager {
      * based on scroll offsets, we simplify the math by computing the
      * visible grid as what will initially fit on screen, plus one.
      */
-    private void updateWindowSizing() {
+    public void updateWindowSizing() {
         mVisibleColumnCount = (getHorizontalSpace() / mDecoratedChildWidth) + 1;
         if (getHorizontalSpace() % mDecoratedChildWidth > 0) {
             mVisibleColumnCount++;

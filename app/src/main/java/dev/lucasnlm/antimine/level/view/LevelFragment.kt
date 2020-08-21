@@ -71,10 +71,8 @@ open class LevelFragment : CommonLevelFragment(R.layout.fragment_level) {
                 Observer {
                     when (it) {
                         Event.Pause,
-                        Event.ResumeGameOver,
                         Event.GameOver,
-                        Event.Victory,
-                        Event.ResumeVictory -> areaAdapter.setClickEnabled(false)
+                        Event.Victory -> areaAdapter.setClickEnabled(false)
                         Event.Running,
                         Event.Resume,
                         Event.ResumeGame,

@@ -4,6 +4,7 @@ data class Area(
     val id: Int,
     val posX: Int,
     val posY: Int,
+    val enabled: Boolean,
     val minesAround: Int = 0,
     val hasMine: Boolean = false,
     val mistake: Boolean = false,

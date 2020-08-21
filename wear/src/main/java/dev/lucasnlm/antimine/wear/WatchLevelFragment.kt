@@ -3,42 +3,46 @@ package dev.lucasnlm.antimine.wear
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import dev.lucasnlm.antimine.common.R
 import dev.lucasnlm.antimine.common.level.models.AmbientSettings
 import dev.lucasnlm.antimine.common.level.models.Event
 import dev.lucasnlm.antimine.common.level.view.CommonLevelFragment
 import dev.lucasnlm.antimine.common.level.view.SpaceItemDecoration
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class WatchLevelFragment : CommonLevelFragment(R.layout.fragment_level) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         recyclerGrid = view.findViewById(R.id.recyclerGrid)
 
-        GlobalScope.launch {
+        lifecycleScope.launchWhenCreated {
             val levelSetup = gameViewModel.loadLastGame()
+            recyclerGrid.doOnLayout {
+                lifecycleScope.launch {
+                    recyclerGrid.apply {
+                        val horizontalPadding = calcHorizontalPadding(levelSetup.width)
+                        val verticalPadding = calcVerticalPadding(levelSetup.height)
+                        setHasFixedSize(true)
+                        addItemDecoration(SpaceItemDecoration(R.dimen.field_padding))
+                        setPadding(horizontalPadding, verticalPadding, 0, 0)
+                        layoutManager = makeNewLayoutManager(levelSetup.width)
+                        adapter = areaAdapter
+                        alpha = 0.0f
 
-            withContext(Dispatchers.Main) {
-                recyclerGrid.apply {
-                    val horizontalPadding = calcHorizontalPadding(levelSetup.width)
-                    val verticalPadding = calcVerticalPadding(levelSetup.height)
-                    setHasFixedSize(true)
-                    addItemDecoration(SpaceItemDecoration(R.dimen.field_padding))
-                    setPadding(horizontalPadding, verticalPadding, 0, 0)
-                    layoutManager = makeNewLayoutManager(levelSetup.width)
-                    adapter = areaAdapter
-                    alpha = 0.0f
+                        val dy = calcVerticalScrollToCenter(levelSetup.height)
+                        val dx = calcHorizontalScrollToCenter(levelSetup.width)
+                        smoothScrollBy(dx, dy, null, 0)
 
-                    animate().apply {
-                        alpha(1.0f)
-                        duration = DateUtils.SECOND_IN_MILLIS
-                    }.start()
+                        animate().apply {
+                            alpha(1.0f)
+                            duration = DateUtils.SECOND_IN_MILLIS
+                        }.start()
+                    }
                 }
             }
         }
@@ -50,18 +54,6 @@ class WatchLevelFragment : CommonLevelFragment(R.layout.fragment_level) {
                     areaAdapter.bindField(it)
                 }
             )
-            levelSetup.observe(
-                viewLifecycleOwner,
-                Observer {
-                    recyclerGrid.apply {
-                        val horizontalPadding = calcHorizontalPadding(it.width)
-                        val verticalPadding = calcVerticalPadding(it.height)
-                        layoutManager = makeNewLayoutManager(it.width)
-                        setPadding(horizontalPadding, verticalPadding, 0, 0)
-                    }
-                }
-            )
-
             eventObserver.observe(
                 viewLifecycleOwner,
                 Observer {
@@ -70,8 +62,8 @@ class WatchLevelFragment : CommonLevelFragment(R.layout.fragment_level) {
                     }
 
                     when (it) {
-                        Event.ResumeGameOver, Event.GameOver,
-                        Event.Victory, Event.ResumeVictory -> areaAdapter.setClickEnabled(false)
+                        Event.GameOver,
+                        Event.Victory -> areaAdapter.setClickEnabled(false)
                         else -> areaAdapter.setClickEnabled(true)
                     }
                 }

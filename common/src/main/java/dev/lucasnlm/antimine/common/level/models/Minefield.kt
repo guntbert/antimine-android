@@ -4,4 +4,6 @@ data class Minefield(
     val width: Int,
     val height: Int,
     val mines: Int
-)
+) {
+    fun size() = width * height
+}

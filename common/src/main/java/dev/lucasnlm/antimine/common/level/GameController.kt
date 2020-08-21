@@ -31,8 +31,8 @@ class GameController {
     private val minefieldCreator: MinefieldCreator
     private var field: List<Area>
 
-    constructor(minefield: Minefield, seed: Long, saveId: Int? = null) {
-        this.minefieldCreator = MinefieldCreator(minefield, Random(seed))
+    constructor(minefield: Minefield, seed: Long, isRound: Boolean, saveId: Int? = null) {
+        this.minefieldCreator = MinefieldCreator(minefield, Random(seed), isRound)
         this.minefield = minefield
         this.seed = seed
         this.saveId = saveId ?: 0
@@ -41,7 +41,7 @@ class GameController {
     }
 
     constructor(save: Save) {
-        this.minefieldCreator = MinefieldCreator(save.minefield, Random(save.seed))
+        this.minefieldCreator = MinefieldCreator(save.minefield, Random(save.seed), false)
         this.minefield = save.minefield
         this.saveId = save.uid
         this.seed = save.seed

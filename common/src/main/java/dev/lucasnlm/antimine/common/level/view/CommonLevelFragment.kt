@@ -38,4 +38,19 @@ abstract class CommonLevelFragment(@LayoutRes val contentLayoutId: Int) : Fragme
         val calculatedHeight = (height - recyclerViewHeight - separatorsHeight)
         return (calculatedHeight / 2).coerceAtLeast(0.0f).toInt()
     }
+    protected fun calcVerticalScrollToCenter(boardHeight: Int): Int {
+        val height = requireView().measuredHeight
+        val recyclerViewHeight = (dimensionRepository.areaSize() * boardHeight)
+        val separatorsHeight = (2 * dimensionRepository.areaSeparator() * (boardHeight - 1))
+
+        return (((recyclerViewHeight + separatorsHeight) - height).coerceAtLeast(0.0f) * 0.5f).toInt()
+    }
+
+    protected fun calcHorizontalScrollToCenter(boardWidth: Int): Int {
+        val width = requireView().measuredWidth
+        val recyclerViewWidth = (dimensionRepository.areaSize() * boardWidth)
+        val separatorsWidth = (2 * dimensionRepository.areaSeparator() * (boardWidth - 1))
+
+        return (((recyclerViewWidth + separatorsWidth) - width).coerceAtLeast(0.0f) * 0.5f).toInt()
+    }
 }
